@@ -1,0 +1,4 @@
+venv
+*.pyc
+app.db
+app.db-journal
