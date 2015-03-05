@@ -3,6 +3,11 @@ from flask import render_template, request, url_for, redirect
 from app import app, db
 from models import Recipe
 
+@app.route('/random')
+def random():
+    recipe = Recipe.random().first_or_404()
+    return render_template('show.html', recipe=recipe)
+
 @app.route('/<id>')
 def show(id):
     recipe = Recipe.query.get_or_404(id)

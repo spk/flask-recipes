@@ -1,4 +1,5 @@
 from app import db
+from sqlalchemy.sql.expression import func
 
 categories = db.Table('categories',
         db.Column('category_id', db.Integer, db.ForeignKey('category.id')),
@@ -21,6 +22,10 @@ class Recipe(db.Model):
 
     def __repr__(self):
         return '<%s>' % (self.title)
+
+    @classmethod
+    def random(self):
+        return self.query.order_by(func.random()).limit(1)
 
 class Direction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
