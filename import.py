@@ -6,7 +6,6 @@ import zipfile
 import glob
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import ParseError
-from datetime import datetime
 from app import app, db
 from app.models import Recipe, Direction, Ingredient, Category
 
@@ -37,6 +36,10 @@ class ImportRecipes(object):
 
     def new_recipe(self, root):
         title = root.find('recipe/head/title')
+        try:
+            quantity = root.find('recipe/head/yield').text.strip()
+        except AttributeError:
+            quantity = None
 
         cats = root.findall('recipe/head/categories/cat')
         cats_name = set([el.text for el in cats if el.text and len(el.text) > 1 and not el.text == 'None'])
@@ -64,10 +67,10 @@ class ImportRecipes(object):
                 directions.append(Direction(step=step.text.strip()))
 
         return Recipe(title=title.text.strip(),
+                quantity=quantity,
                 directions=directions,
                 ingredients=ingredients,
-                categories=categories,
-                created_at=datetime.utcnow())
+                categories=categories)
 
     @classmethod
     def get_or_initialize(self, model, **kwargs):

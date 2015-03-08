@@ -36,5 +36,17 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
         assert recipe.title in rv.data
 
+    def test_with_quantity(self):
+        recipe = self.create_recipe(title='with quantity', quantity=1)
+        rv = self.app.get('/{0}'.format(recipe.id))
+        h1 = '{0} ({1})'.format(recipe.title, recipe.quantity)
+        assert h1 in rv.data
+
+    def test_without_quantity(self):
+        recipe = self.create_recipe(title='without quantity', quantity=None)
+        rv = self.app.get('/{0}'.format(recipe.id))
+        h1 = '{0}'.format(recipe.title)
+        assert h1 in rv.data
+
 if __name__ == '__main__':
     unittest.main()

@@ -5,25 +5,25 @@
 {% block content %}
 {% include "_nav.html" %}
 <section class="container">
-    <h1>{{recipe.title}}</h1>
+    <h1>{{recipe.title}} {%- if recipe.quantity %} ({{recipe.quantity}}){%- endif %}</h1>
 
     <h4>Categories</h4>
     <ul>
-        {% for category in recipe.categories %}
+        {%- for category in recipe.categories %}
         <li>{{category.title}}</li>
-        {% endfor %}
+        {%- endfor %}
     </ul>
     <h4>Ingredients</h4>
     <ul>
-        {% for ingredient in recipe.ingredients %}
+        {%- for ingredient in recipe.ingredients %}
         <li>{{ingredient.quantity|replace(None, '')}} {{ingredient.unit|replace(None, '')}} {{ingredient.item}}</li>
-        {% endfor %}
+        {%- endfor %}
     </ul>
     <h4>Steps</h4>
     <ul>
-        {% for direction in recipe.directions %}
+        {%- for direction in recipe.directions %}
         <li>{{direction.step}}</li>
-        {% endfor %}
+        {%- endfor %}
     </ul>
 </section>
 {% endblock %}

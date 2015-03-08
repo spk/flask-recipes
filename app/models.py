@@ -1,4 +1,5 @@
 from app import db
+from datetime import datetime
 from sqlalchemy.sql.expression import func
 
 categories = db.Table('categories',
@@ -12,13 +13,14 @@ class Recipe(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(30), index=True)
+    quantity = db.Column(db.Integer)
     directions = db.relationship('Direction', backref='Recipe',
             lazy='dynamic')
     ingredients = db.relationship('Ingredient', backref='Recipe',
             lazy='dynamic')
     categories = db.relationship('Category', secondary=categories,
             backref=db.backref('recipes', lazy='dynamic'))
-    created_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
         return '<%s>' % (self.title)
