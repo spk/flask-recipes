@@ -1,8 +1,9 @@
 import os
 import unittest
 import tempfile
+from contextlib import contextmanager
 from app import app, db
-from app.models import Recipe
+from app.models import Recipe, Category
 
 class AppTestCase(unittest.TestCase):
     def setUp(self):
@@ -16,11 +17,12 @@ class AppTestCase(unittest.TestCase):
         os.close(self.db_fd)
         os.unlink(self.db_name)
 
+    @contextmanager
     def create_recipe(self, **kwargs):
         new_recipe = Recipe(**kwargs)
         db.session.add(new_recipe)
         db.session.commit()
-        return new_recipe
+        yield new_recipe
 
     def test_empty_db(self):
         rv = self.app.get('/')
@@ -31,22 +33,33 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 404)
 
     def test_random_with_data(self):
-        recipe = self.create_recipe(title='random')
-        rv = self.app.get('/random')
-        self.assertEqual(rv.status_code, 200)
-        assert recipe.title in rv.data
+        with self.create_recipe(title='random') as recipe:
+            rv = self.app.get('/random')
+            self.assertEqual(rv.status_code, 200)
+            assert recipe.title in rv.data
 
     def test_with_quantity(self):
-        recipe = self.create_recipe(title='with quantity', quantity=1)
-        rv = self.app.get('/{0}'.format(recipe.id))
-        h1 = '{0} ({1})'.format(recipe.title, recipe.quantity)
-        assert h1 in rv.data
+        with self.create_recipe(title='with quantity', quantity=1) as recipe:
+            rv = self.app.get('/{0}'.format(recipe.id))
+            h1 = '{0} ({1})'.format(recipe.title, recipe.quantity)
+            assert h1 in rv.data
 
     def test_without_quantity(self):
-        recipe = self.create_recipe(title='without quantity', quantity=None)
-        rv = self.app.get('/{0}'.format(recipe.id))
-        h1 = '{0}'.format(recipe.title)
-        assert h1 in rv.data
+        with self.create_recipe(title='without quantity', quantity=None) as recipe:
+            rv = self.app.get('/{0}'.format(recipe.id))
+            h1 = '{0}'.format(recipe.title)
+            assert h1 in rv.data
+
+    def test_xml_format(self):
+        categories = [Category(title='category title')]
+        with self.create_recipe(title='title', quantity=10, categories=categories) as recipe:
+            rv = self.app.get('/{0}.xml'.format(recipe.id))
+            title = "<title>{0}</title>".format(recipe.title)
+            quantity = "<yield>{0}</yield>".format(recipe.quantity)
+            cat = "<cat>{0}</cat>".format(recipe.categories[0].title)
+            assert title in rv.data
+            assert quantity in rv.data
+            assert cat in rv.data
 
 if __name__ == '__main__':
     unittest.main()

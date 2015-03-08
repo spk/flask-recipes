@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<recipeml version="0.5">
+    <recipe>
+        <head>
+            <title>{{recipe.title|safe}}</title>
+            <categories>
+                {%- for cat in recipe.categories %}
+                <cat>{{ cat.title }}</cat>
+                {%- endfor %}
+            </categories>
+            {%- if recipe.quantity %}
+                <yield>{{recipe.quantity}}</yield>
+            {%- endif %}
+        </head>
+        <ingredients>
+            {%- for ing in recipe.ingredients %}
+            <ing>
+                <amt>
+                    <qty>{{ing.quantity}}</qty>
+                    <unit>{{ing.unit}}</unit>
+                </amt>
+                <item>{{ing.item}}</item>
+            </ing>
+            {%- endfor %}
+        </ingredients>
+        <directions>
+            {%- for direction in recipe.directions %}
+            <step>{{direction.step}}</step>
+            {%- endfor %}
+        </directions>
+    </recipe>
+</recipeml>

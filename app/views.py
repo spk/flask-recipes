@@ -1,4 +1,4 @@
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for, redirect, Response
 
 from app import app, db
 from models import Recipe
@@ -7,6 +7,12 @@ from models import Recipe
 def random():
     recipe = Recipe.random().first_or_404()
     return render_template('show.html', recipe=recipe)
+
+@app.route('/<id>.xml')
+def show_xml(id):
+    recipe = Recipe.query.get_or_404(id)
+    xml = render_template('show.xml', recipe=recipe)
+    return Response(xml, mimetype='text/xml')
 
 @app.route('/<id>')
 def show(id):
