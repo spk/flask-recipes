@@ -39,11 +39,11 @@ class ImportRecipes(object):
         title = root.find('recipe/head/title')
 
         cats = root.findall('recipe/head/categories/cat')
+        cats_name = set([el.text for el in cats if el.text and len(el.text) > 1 and not el.text == 'None'])
         categories = []
-        for cat in cats:
-            if cat.text and len(cat.text) > 1 and not cat.text == 'None':
-                category = ImportRecipes.get_or_initialize(Category, title=cat.text.strip())
-                categories.append(category)
+        for cat in cats_name:
+            category = ImportRecipes.get_or_initialize(Category, title=cat.strip())
+            categories.append(category)
 
         # XXX check ingredients validity (None)
         ings = root.findall('recipe/ingredients/ing')
