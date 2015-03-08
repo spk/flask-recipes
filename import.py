@@ -13,14 +13,15 @@ from app.models import Recipe, Direction, Ingredient, Category
 class ImportRecipes(object):
     def __init__(self):
         self.basedir = os.path.abspath(os.path.dirname(__file__))
+        self.recipes_files = os.path.join(self.basedir, 'recipes', '*.zip')
         self.create_db()
 
     def main(self):
-        for zipname in glob.glob(os.path.join(self.basedir, 'recipes/*.zip')):
+        for zipname in glob.glob(self.recipes_files):
             with zipfile.ZipFile(zipname, 'r') as z:
-                print zipname
+                print("Import recipes from zip: {0}".format(zipname))
                 for filename in z.namelist():
-                    print filename
+                    print("Import recipe: {0}".format(filename))
                     try:
                         content = z.open(filename).read()
                         root = ET.fromstring(content)
