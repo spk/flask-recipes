@@ -25,6 +25,10 @@
         <li>{{direction.step}}</li>
         {%- endfor %}
     </ul>
+
+    <a href="{{ url_for('show_xml', id=recipe.id)}}" class="btn btn-default btn-lg">
+        <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download
+    </a>
 </section>
 {% endblock %}
 
