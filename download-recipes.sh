@@ -1,9 +1,11 @@
 #!/usr/bin/env sh
 set -e
 
-mkdir -p recipes
+DEST_DIR="recipes"
+mkdir -p "${DEST_DIR}"
 
 for i in $(seq -w 1 110)
 do
-    wget "http://dsquirrel.tripod.com/xmlzips/RecipeMLArchive00${i}.zip" -O "${i}.zip"
+    wget -c "http://dsquirrel.tripod.com/xmlzips/RecipeMLArchive00${i}.zip" \
+        -O "${DEST_DIR}/${i}.zip"
 done
