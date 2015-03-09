@@ -1,0 +1,17 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/fixes.html" as fixes %}
+
+{% block content %}
+{% include "_nav.html" %}
+
+<section class="container">
+{% block container %}{% endblock %}
+</section>
+
+{% endblock %}
+
+{% block head %}
+{{super()}}
+{{fixes.ie8()}}
+{% endblock %}

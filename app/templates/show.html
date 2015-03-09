@@ -1,10 +1,6 @@
-{% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% import "bootstrap/fixes.html" as fixes %}
+{% extends "_layout.html" %}
 
-{% block content %}
-{% include "_nav.html" %}
-<section class="container">
+{% block container %}
     <h1>{{recipe.title}} {%- if recipe.quantity %} ({{recipe.quantity}}){%- endif %}</h1>
 
     <h4>Categories</h4>
@@ -29,10 +25,4 @@
     <a href="{{ url_for('show_xml', id=recipe.id)}}" class="btn btn-default btn-lg">
         <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download
     </a>
-</section>
-{% endblock %}
-
-{% block head %}
-{{super()}}
-{{fixes.ie8()}}
 {% endblock %}

@@ -1,12 +1,7 @@
-{% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% import "bootstrap/fixes.html" as fixes %}
+{% extends "_layout.html" %}
 {% from "_helpers.html" import render_pagination %}
 
-{% block content %}
-{% include "_nav.html" %}
-
-<section class="container">
+{% block container %}
     <h4>Recipes</h4>
     <ul class="nav nav-pills nav-stacked">
         {%- for recipe in pagination.items %}
@@ -20,10 +15,4 @@
             {{ render_pagination(pagination, request.endpoint) }}
         {%- endif %}
     </ul>
-</section>
-{% endblock %}
-
-{% block head %}
-{{super()}}
-{{fixes.ie8()}}
 {% endblock %}
