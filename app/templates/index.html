@@ -14,7 +14,11 @@
         {%- else %}
             <li><em>No entries.</em></li>
         {%- endfor %}
-        {{ render_pagination(pagination, 'index') }}
+        {%- if title %}
+            {{ render_pagination(pagination, request.endpoint, title=title) }}
+        {%- else %}
+            {{ render_pagination(pagination, request.endpoint) }}
+        {%- endif %}
     </ul>
 </section>
 {% endblock %}
