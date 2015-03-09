@@ -1,7 +1,7 @@
 from flask import render_template, request, url_for, redirect, Response
 
 from app import app, db
-from models import Recipe
+from models import Recipe, Category
 
 @app.route('/random')
 def random():
@@ -19,11 +19,16 @@ def show(id):
     recipe = Recipe.query.get_or_404(id)
     return render_template('show.html', recipe=recipe)
 
+@app.route('/categories/<title>')
+def categories(title):
+    page, per_page = get_page_items()
+    pagination = Category.query.filter_by(title=title).first_or_404().recipes.paginate(page, per_page)
+    return render_template('index.html', pagination=pagination)
+
 @app.route('/')
 def index():
-    query = Recipe.query
     page, per_page = get_page_items()
-    pagination = query.order_by(Recipe.created_at.desc()).paginate(page, per_page)
+    pagination = Recipe.query.order_by(Recipe.created_at.desc()).paginate(page, per_page)
     return render_template('index.html', pagination=pagination)
 
 def get_page_items():

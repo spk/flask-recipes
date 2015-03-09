@@ -10,7 +10,7 @@
     <h4>Categories</h4>
     <ul>
         {%- for category in recipe.categories %}
-        <li>{{category.title}}</li>
+        <li><a href="{{url_for('categories', title=category.title)}}">{{category.title}}</a></li>
         {%- endfor %}
     </ul>
     <h4>Ingredients</h4>

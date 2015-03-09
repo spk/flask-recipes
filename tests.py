@@ -4,6 +4,7 @@ import tempfile
 from contextlib import contextmanager
 from app import app, db
 from app.models import Recipe, Category
+from flask import url_for
 
 class AppTestCase(unittest.TestCase):
     def setUp(self):
@@ -49,6 +50,19 @@ class AppTestCase(unittest.TestCase):
             rv = self.app.get('/{0}'.format(recipe.id))
             h1 = '{0}'.format(recipe.title)
             assert h1 in rv.data
+
+    def test_without_categories(self):
+        with app.test_request_context():
+            rv = self.app.get(url_for('categories', title='None'))
+            self.assertEqual(rv.status_code, 404)
+
+    def test_with_categories(self):
+        title = 'category'
+        categories = [Category(title=title)]
+        with self.create_recipe(title='title', quantity=10, categories=categories) as recipe:
+            with app.test_request_context():
+                rv = self.app.get(url_for('categories', title=title))
+                self.assertEqual(rv.status_code, 200)
 
     def test_xml_format(self):
         categories = [Category(title='category title')]
