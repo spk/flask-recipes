@@ -1,6 +1,6 @@
 # flask-recipes
 
-Import recipes into sample flask web app.
+Import recipes into flask web app.
 
 ## Install
 
