@@ -1,8 +1,6 @@
 # flask-recipes
 
-Import [RecipeML](http://www.formatdata.com/recipeml/spec/recipeml-spec.html)
-[recipes](http://dsquirrel.tripod.com/recipeml/indexrecipes2.html) into sample
-web app.
+Import recipes into sample flask web app.
 
 ## Install
 
@@ -32,6 +30,10 @@ python import.py
 ~~~
 
 Goto http://127.0.0.1:5000/
+
+## Resources
+
+* http://microformats.org/wiki/recipe-formats
 
 ## License
 
