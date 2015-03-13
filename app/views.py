@@ -15,12 +15,6 @@ def show_json(id):
     result = RecipeSchema().dump(recipe)
     return jsonify(result.data)
 
-@app.route('/<id>.xml')
-def show_xml(id):
-    recipe = Recipe.query.get_or_404(id)
-    xml = render_template('show.xml', recipe=recipe)
-    return Response(xml, mimetype='text/xml')
-
 @app.route('/<id>')
 def show(id):
     recipe = Recipe.query.get_or_404(id)

@@ -65,18 +65,6 @@ class AppTestCase(unittest.TestCase):
                 rv = self.app.get(url_for('categories', title=title))
                 self.assertEqual(rv.status_code, 200)
 
-    def test_xml_format(self):
-        categories = [Category(title='category title')]
-        with self.create_recipe(title='title', quantity=10, categories=categories) as recipe:
-            rv = self.app.get('/{0}.xml'.format(recipe.id))
-            data = rv.data
-            title = "<title>{0}</title>".format(recipe.title)
-            quantity = "<yield>{0}</yield>".format(recipe.quantity)
-            cat = "<cat>{0}</cat>".format(recipe.categories[0].title)
-            assert title in data
-            assert quantity in data
-            assert cat in data
-
     def test_json_format(self):
         title = 'json'
         with self.create_recipe(title=title) as recipe:
