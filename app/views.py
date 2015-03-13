@@ -1,12 +1,19 @@
-from flask import render_template, request, url_for, redirect, Response
+from flask import render_template, request, url_for, redirect, Response, jsonify
 
 from app import app, db
 from models import Recipe, Category
+from schemas import RecipeSchema
 
 @app.route('/random')
 def random():
     recipe = Recipe.random().first_or_404()
     return render_template('show.html', recipe=recipe)
+
+@app.route('/<id>.json')
+def show_json(id):
+    recipe = Recipe.query.get_or_404(id)
+    result = RecipeSchema().dump(recipe)
+    return jsonify(result.data)
 
 @app.route('/<id>.xml')
 def show_xml(id):

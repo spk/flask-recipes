@@ -1,6 +1,7 @@
 import os
 import unittest
 import tempfile
+import json
 from contextlib import contextmanager
 from app import app, db
 from app.models import Recipe, Category
@@ -68,12 +69,20 @@ class AppTestCase(unittest.TestCase):
         categories = [Category(title='category title')]
         with self.create_recipe(title='title', quantity=10, categories=categories) as recipe:
             rv = self.app.get('/{0}.xml'.format(recipe.id))
+            data = rv.data
             title = "<title>{0}</title>".format(recipe.title)
             quantity = "<yield>{0}</yield>".format(recipe.quantity)
             cat = "<cat>{0}</cat>".format(recipe.categories[0].title)
-            assert title in rv.data
-            assert quantity in rv.data
-            assert cat in rv.data
+            assert title in data
+            assert quantity in data
+            assert cat in data
+
+    def test_json_format(self):
+        title = 'json'
+        with self.create_recipe(title=title) as recipe:
+            rv = self.app.get('/{0}.json'.format(recipe.id))
+            data = json.loads(rv.data)
+            self.assertEqual(data['title'], title)
 
 if __name__ == '__main__':
     unittest.main()
