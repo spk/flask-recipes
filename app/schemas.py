@@ -19,3 +19,10 @@ class IngredientSchema(Schema):
 class CategorySchema(Schema):
     class Meta:
         fields = ('title', )
+
+# https://pythonhosted.org/Flask-SQLAlchemy/api.html#flask.ext.sqlalchemy.Pagination
+class PaginationSchema(Schema):
+    items = fields.Nested('RecipeSchema', many=True)
+    class Meta:
+        fields = ('has_next', 'has_prev', 'items', 'page',
+                'pages', 'per_page', 'total')

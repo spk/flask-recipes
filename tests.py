@@ -65,12 +65,25 @@ class AppTestCase(unittest.TestCase):
                 rv = self.app.get(url_for('categories', title=title))
                 self.assertEqual(rv.status_code, 200)
 
-    def test_json_format(self):
+    def test_api_get_recipe(self):
         title = 'json'
         with self.create_recipe(title=title) as recipe:
-            rv = self.app.get('/{0}.json'.format(recipe.id))
+            rv = self.app.get('/api/v1/{0}'.format(recipe.id))
             data = json.loads(rv.data)
             self.assertEqual(data['title'], title)
+
+    def test_api_get_recipes(self):
+        title = 'recipes api'
+        with self.create_recipe(title=title) as recipe:
+            rv = self.app.get('/api/v1/recipes')
+            data = json.loads(rv.data)
+            self.assertEqual(data['has_next'], False)
+            self.assertEqual(data['has_prev'], False)
+            self.assertEqual(recipe.title, data['items'][0]['title'])
+            self.assertEqual(data['page'], 1)
+            self.assertEqual(data['pages'], 1)
+            self.assertEqual(data['per_page'], 10)
+            self.assertEqual(data['total'], 1)
 
 if __name__ == '__main__':
     unittest.main()

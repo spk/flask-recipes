@@ -22,7 +22,7 @@
         {%- endfor %}
     </ul>
 
-    <a href="{{ url_for('show_json', id=recipe.id)}}" class="btn btn-default btn-lg">
+    <a href="{{ url_for('api_get_recipe', id=recipe.id)}}" class="btn btn-default btn-lg">
         <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download
     </a>
 {% endblock %}

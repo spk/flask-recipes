@@ -2,18 +2,26 @@ from flask import render_template, request, url_for, redirect, Response, jsonify
 
 from app import app, db
 from models import Recipe, Category
-from schemas import RecipeSchema
+from schemas import RecipeSchema, PaginationSchema
+
+@app.route('/api/v1/<int:id>')
+def api_get_recipe(id):
+    recipe = Recipe.query.get_or_404(id)
+    result = RecipeSchema().dump(recipe)
+    return jsonify(result.data)
+
+@app.route('/api/v1/recipes', defaults={'page': 1})
+@app.route('/api/v1/recipes/page/<int:page>')
+def api_get_recipes(page):
+    per_page = get_per_page()
+    pagination = Recipe.query.order_by(Recipe.created_at.desc()).paginate(page, per_page)
+    result = PaginationSchema().dump(pagination)
+    return jsonify(result.data)
 
 @app.route('/random')
 def random():
     recipe = Recipe.random().first_or_404()
     return render_template('show.html', recipe=recipe)
-
-@app.route('/<id>.json')
-def show_json(id):
-    recipe = Recipe.query.get_or_404(id)
-    result = RecipeSchema().dump(recipe)
-    return jsonify(result.data)
 
 @app.route('/<id>')
 def show(id):
