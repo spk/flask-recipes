@@ -13,7 +13,6 @@ class ImportRecipes(object):
     def __init__(self):
         self.basedir = os.path.abspath(os.path.dirname(__file__))
         self.recipes_files = os.path.join(self.basedir, 'recipes', '*.zip')
-        self.create_db()
 
     def main(self):
         for zipname in glob.glob(self.recipes_files):
@@ -29,10 +28,6 @@ class ImportRecipes(object):
                     except ParseError:
                         print("Error ! Last successful: {0}".format(filename))
         return 0
-
-    def create_db(self):
-        if not os.path.exists(os.path.join(self.basedir, 'app.db')):
-            db.create_all()
 
     def new_recipe(self, root):
         title = root.find('recipe/head/title')

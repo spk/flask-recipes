@@ -11,11 +11,10 @@ source venv/bin/activate
 pip install -r requirements.txt
 ~~~
 
-Start `python` console:
+Create database:
 
 ~~~ console
-from app import db
-db.create_all()
+python db_manage.py up
 ~~~
 
 ~~~ console

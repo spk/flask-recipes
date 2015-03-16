@@ -1,7 +1,9 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+POSTGRES_HOST = 'postgres://postgres@flaskrecipes_db_1:5432/'
+POSTGRES_DB = 'flaskrecipes_development'
+SQLALCHEMY_DATABASE_URI = POSTGRES_HOST + POSTGRES_DB
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 CSRF_ENABLED = True

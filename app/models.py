@@ -13,8 +13,8 @@ class Recipe(db.Model):
     Model for the Recipe created by the users.
     """
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(30), index=True)
-    quantity = db.Column(db.Integer)
+    title = db.Column(db.String(150), index=True)
+    quantity = db.Column(db.String(15))
     directions = db.relationship('Direction', backref='Recipe',
             lazy='dynamic')
     ingredients = db.relationship('Ingredient', backref='Recipe',
@@ -39,9 +39,9 @@ class Direction(db.Model):
 class Ingredient(db.Model):
     __tablename__ = 'ingredients'
     id = db.Column(db.Integer, primary_key=True)
-    quantity = db.Column(db.Integer)
+    quantity = db.Column(db.String(15))
     unit = db.Column(db.String(30))
-    item = db.Column(db.String(30), index=True)
+    item = db.Column(db.Text, index=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'))
 
 class Category(db.Model):
