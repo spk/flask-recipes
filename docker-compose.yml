@@ -1,0 +1,11 @@
+db:
+  image: postgres
+web:
+  build: .
+  command: python run.py
+  volumes:
+    - .:/code
+  ports:
+    - "127.0.0.1:5000:5000"
+  links:
+    - db
