@@ -6,7 +6,7 @@
     <h4>Categories</h4>
     <ul>
         {%- for category in recipe.categories %}
-        <li><a href="{{url_for('.categories', title=category.title)}}">{{category.title}}</a></li>
+        <li><a href="{{url_for('.recipes_by_category', title=category.title)}}">{{category.title}}</a></li>
         {%- endfor %}
     </ul>
     <h4>Ingredients</h4>

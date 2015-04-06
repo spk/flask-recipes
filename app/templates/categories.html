@@ -1,0 +1,14 @@
+{% extends "_layout.html" %}
+{% from "_helpers.html" import render_pagination %}
+
+{% block container %}
+    <h4>Categories</h4>
+    <ul class="nav nav-pills nav-stacked">
+        {%- for category in pagination.items %}
+            <li class="category"><a href="{{url_for('.recipes_by_category', title=category.title)}}">{{category.title}}</a></li>
+        {%- else %}
+            <li><em>No entries.</em></li>
+        {%- endfor %}
+        {{ render_pagination(pagination, request.endpoint) }}
+    </ul>
+{% endblock %}

@@ -29,9 +29,17 @@ def show(id):
     recipe = Recipe.query.get_or_404(id)
     return render_template('show.html', recipe=recipe)
 
+
+@recipes.route('/categories/', defaults={'page': 1})
+@recipes.route('/categories/page/<int:page>')
+def categories(page):
+    per_page = get_per_page()
+    pagination = Category.query.order_by(Category.created_at.desc()).paginate(page, per_page)
+    return render_template('categories.html', pagination=pagination)
+
 @recipes.route('/categories/<title>', defaults={'page': 1})
 @recipes.route('/categories/<title>/page/<int:page>')
-def categories(title, page):
+def recipes_by_category(title, page):
     per_page = get_per_page()
     pagination = Category.query.filter_by(title=title).first_or_404().recipes.paginate(page, per_page)
     return render_template('index.html', pagination=pagination, title=title)

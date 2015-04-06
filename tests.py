@@ -51,29 +51,40 @@ class AppTestCase(TestCase):
         self.assertEqual(rv.status_code, 200)
         assert recipe.title in rv.data
 
-    def test_with_quantity(self):
+    def test_recipes_with_quantity(self):
         recipe = self.create_recipe(title='with quantity', quantity=1)
         rv = self.client.get('/{0}'.format(recipe.id))
         h1 = '{0} ({1})'.format(recipe.title, recipe.quantity)
         assert h1 in rv.data
 
-    def test_without_quantity(self):
+    def test_recipes_without_quantity(self):
         recipe = self.create_recipe(title='without quantity', quantity=None)
         rv = self.client.get('/{0}'.format(recipe.id))
         h1 = '{0}'.format(recipe.title)
         assert h1 in rv.data
 
-    def test_without_categories(self):
-        with self.client as c:
-            rv = c.get(url_for('recipes.categories', title='None'))
-            self.assertEqual(rv.status_code, 404)
+    def test_no_categories(self):
+        rv = self.client.get(url_for('recipes.categories'))
+        assert 'No entries.' in rv.data
 
     def test_with_categories(self):
+        category = Category(title='Vegetarian')
+        db.session.add(category)
+        db.session.commit()
+        rv = self.client.get(url_for('recipes.categories'))
+        assert category.title in rv.data
+
+    def test_recipes_without_categories(self):
+        with self.client as c:
+            rv = c.get(url_for('recipes.recipes_by_category', title='None'))
+            self.assertEqual(rv.status_code, 404)
+
+    def test_recipes_with_categories(self):
         title = 'category'
         categories = [Category(title=title)]
         recipe = self.create_recipe(title='title', quantity=10, categories=categories)
         with self.client as c:
-            rv = c.get(url_for('recipes.categories', title=title))
+            rv = c.get(url_for('recipes.recipes_by_category', title=title))
             self.assertEqual(rv.status_code, 200)
 
     def test_api_get_recipe(self):
