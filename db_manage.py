@@ -1,21 +1,25 @@
 import sys
 from sqlalchemy import create_engine
-from config import POSTGRES_HOST, POSTGRES_DB
-from app import db
+from app.factory import create_app
+import app.models
+from app.extensions import db
+from app.config import config, SELECTED_CONFIG
 
 class DBManage(object):
     def __init__(self):
-        self.host = POSTGRES_HOST
+        self.host = config[SELECTED_CONFIG].POSTGRES_HOST
         self.engine = create_engine(self.host, echo=True)
         self.conn = self.engine.connect()
 
-    def up(self, db_name=POSTGRES_DB):
+    def up(self, db_name=config[SELECTED_CONFIG].POSTGRES_DB):
         self.conn.execute("commit")
         self.conn.execute("create database {0}".format(db_name))
         self.conn.close()
-        db.create_all()
+        app = create_app()
+        with app.app_context():
+            db.create_all()
 
-    def down(self, db_name=POSTGRES_DB):
+    def down(self, db_name=config[SELECTED_CONFIG].POSTGRES_DB):
         self.conn.execute("commit")
         self.conn.execute("drop database {0}".format(db_name))
         self.conn.close()

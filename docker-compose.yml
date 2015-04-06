@@ -1,5 +1,29 @@
 db:
   image: postgres
+
+redis:
+  image: redis
+
+celery:
+  build: .
+  command: celery worker --app=app.tasks
+  volumes:
+    - .:/code
+  links:
+    - db
+    - redis
+
+test:
+  build: .
+  command: python tests.py
+  volumes:
+    - .:/code
+  environment:
+    FLASK_ENV: test
+  links:
+    - db
+    - redis
+
 web:
   build: .
   command: python run.py
@@ -9,3 +33,4 @@ web:
     - "127.0.0.1:5000:5000"
   links:
     - db
+    - redis

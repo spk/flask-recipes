@@ -1,42 +1,43 @@
-from flask import render_template, request, url_for, redirect, Response, jsonify
+from flask import render_template, request, url_for, redirect, Response, jsonify, Blueprint
 
-from app import app, db
 from models import Recipe, Category
 from schemas import RecipeSchema, PaginationSchema
 
-@app.route('/api/v1/<int:id>')
+recipes = Blueprint("recipes", __name__)
+
+@recipes.route('/api/v1/<int:id>')
 def api_get_recipe(id):
     recipe = Recipe.query.get_or_404(id)
     result = RecipeSchema().dump(recipe)
     return jsonify(result.data)
 
-@app.route('/api/v1/recipes', defaults={'page': 1})
-@app.route('/api/v1/recipes/page/<int:page>')
+@recipes.route('/api/v1/recipes', defaults={'page': 1})
+@recipes.route('/api/v1/recipes/page/<int:page>')
 def api_get_recipes(page):
     per_page = get_per_page()
     pagination = Recipe.query.order_by(Recipe.created_at.desc()).paginate(page, per_page)
     result = PaginationSchema().dump(pagination)
     return jsonify(result.data)
 
-@app.route('/random')
+@recipes.route('/random')
 def random():
     recipe = Recipe.random().first_or_404()
     return render_template('show.html', recipe=recipe)
 
-@app.route('/<id>')
+@recipes.route('/<id>')
 def show(id):
     recipe = Recipe.query.get_or_404(id)
     return render_template('show.html', recipe=recipe)
 
-@app.route('/categories/<title>', defaults={'page': 1})
-@app.route('/categories/<title>/page/<int:page>')
+@recipes.route('/categories/<title>', defaults={'page': 1})
+@recipes.route('/categories/<title>/page/<int:page>')
 def categories(title, page):
     per_page = get_per_page()
     pagination = Category.query.filter_by(title=title).first_or_404().recipes.paginate(page, per_page)
     return render_template('index.html', pagination=pagination, title=title)
 
-@app.route('/', defaults={'page': 1})
-@app.route('/page/<int:page>')
+@recipes.route('/', defaults={'page': 1})
+@recipes.route('/page/<int:page>')
 def index(page):
     per_page = get_per_page()
     pagination = Recipe.query.order_by(Recipe.created_at.desc()).paginate(page, per_page)
@@ -45,7 +46,7 @@ def index(page):
 def get_per_page():
     per_page = request.args.get('per_page')
     if not per_page:
-        per_page = app.config.get('PER_PAGE', 10)
+        per_page = 10
     else:
         per_page = int(per_page)
     return per_page

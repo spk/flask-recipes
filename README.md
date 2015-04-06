@@ -4,6 +4,8 @@ Import recipes into flask web app.
 
 ## Install
 
+### Standard
+
 ~~~ console
 sudo apt install python-dev python-pip virtualenv
 virtualenv venv
@@ -21,14 +23,32 @@ python db_manage.py up
 python run.py || foreman start
 ~~~
 
+Goto http://127.0.0.1:5000/
+
+### Docker
+
+~~~ console
+docker-compose up
+~~~
+
+Run database creation command with:
+
+~~~ console
+docker-compose run web python db_manage.py up
+~~~
+
 ## Import
 
 ~~~ console
 sh download-recipes.sh
-python import.py
+python import_recipes.py
 ~~~
 
-Goto http://127.0.0.1:5000/
+## Tests
+
+~~~ console
+python tests.py
+~~~
 
 ## Resources
 

@@ -1,7 +1,17 @@
 FROM python:2.7
+
+ENV APP_USER recipes
+ENV APP_ROOT /code
 ENV PYTHONUNBUFFERED 1
-RUN mkdir /code
-WORKDIR /code
-ADD requirements.txt /code/
+
+RUN groupadd -r ${APP_USER} \
+    && useradd -r -m \
+    --home-dir ${APP_ROOT} \
+    -s /usr/sbin/nologin \
+    -g ${APP_USER} ${APP_USER}
+
+WORKDIR ${APP_ROOT}
+ADD requirements.txt ${APP_ROOT}/
 RUN pip install -r requirements.txt
-ADD . /code/
+USER ${APP_USER}
+ADD . ${APP_ROOT}
