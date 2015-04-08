@@ -1,6 +1,7 @@
 from extensions import db
 from datetime import datetime
 from sqlalchemy.sql.expression import func
+from sqlalchemy import event
 
 categories = db.Table('recipes_categories',
         db.Column('category_id', db.Integer, db.ForeignKey('categories.id')),
@@ -49,3 +50,11 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(30), index=True, unique=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow())
+
+# Trigers
+def clean_title_before_insert(mapper, connection, target):
+    target.title = target.title.replace('/', '')
+    target.title = target.title.strip()
+
+event.listen(Recipe, 'before_insert', clean_title_before_insert)
+event.listen(Category, 'before_insert', clean_title_before_insert)

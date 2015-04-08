@@ -35,7 +35,7 @@ def new_recipe(root):
     cats_name = set([el.text for el in cats if el.text and len(el.text) > 1 and not el.text == 'None'])
     categories = []
     for cat in cats_name:
-        category = get_one_or_create(db.session, Category, title=cat.strip())
+        category = get_one_or_create(db.session, Category, title=cat)
         categories.append(category)
 
     # XXX check ingredients validity (None)
@@ -56,7 +56,7 @@ def new_recipe(root):
         if step.text:
             directions.append(Direction(step=step.text.strip()))
 
-    return Recipe(title=title.text.strip(),
+    return Recipe(title=title.text,
             quantity=quantity,
             directions=directions,
             ingredients=ingredients,

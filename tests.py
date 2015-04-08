@@ -107,6 +107,11 @@ class AppTestCase(TestCase):
         self.assertEqual(data['per_page'], 10)
         self.assertEqual(data['total'], 1)
 
+    def test_clean_title_before_insert(self):
+        title = 'test /'
+        recipe = self.create_recipe(title=title)
+        self.assertEqual(recipe.title, 'test')
+
 if __name__ == '__main__':
     import unittest
     unittest.main()
