@@ -1,5 +1,5 @@
 {% extends "_layout.html" %}
-{% from "_helpers.html" import render_pagination %}
+{% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block container %}
     <h4>Recipes</h4>
@@ -10,7 +10,7 @@
             <li><em>No entries.</em></li>
         {%- endfor %}
         {%- if title %}
-            {{ render_pagination(pagination, request.endpoint, title=title) }}
+            {{ render_pagination(pagination, request.endpoint, args={'title': title}) }}
         {%- else %}
             {{ render_pagination(pagination, request.endpoint) }}
         {%- endif %}

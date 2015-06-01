@@ -1,7 +1,7 @@
 Flask==0.10.1
 Flask-SQLAlchemy==2.0
 Flask-WTF==0.9.5
-Flask-Bootstrap==3.3.4.1
+Flask-Bootstrap
 flask-marshmallow==0.6.0
 marshmallow-sqlalchemy==0.2.0
 redis==2.10.3
