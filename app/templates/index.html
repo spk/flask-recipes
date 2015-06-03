@@ -9,10 +9,6 @@
         {%- else %}
             <li><em>No entries.</em></li>
         {%- endfor %}
-        {%- if title %}
-            {{ render_pagination(pagination, request.endpoint, args={'title': title}) }}
-        {%- else %}
-            {{ render_pagination(pagination, request.endpoint) }}
-        {%- endif %}
+        {{ render_pagination(pagination) }}
     </ul>
 {% endblock %}
