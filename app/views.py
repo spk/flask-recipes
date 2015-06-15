@@ -42,7 +42,7 @@ def categories(page):
 def recipes_by_category(title, page):
     per_page = get_per_page()
     pagination = Category.query.filter_by(title=title).first_or_404().recipes.paginate(page, per_page)
-    return render_template('index.html', pagination=pagination, title=title)
+    return render_template('index.html', pagination=pagination)
 
 @recipes.route('/', defaults={'page': 1})
 @recipes.route('/page/<int:page>')
