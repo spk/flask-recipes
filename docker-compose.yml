@@ -13,17 +13,6 @@ celery:
     - db
     - redis
 
-test:
-  build: .
-  command: python tests.py
-  volumes:
-    - .:/code
-  environment:
-    FLASK_ENV: test
-  links:
-    - db
-    - redis
-
 web:
   build: .
   command: python run.py
