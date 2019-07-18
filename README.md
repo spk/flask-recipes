@@ -34,7 +34,7 @@ docker-compose up
 Run database creation command with:
 
 ~~~ console
-docker-compose run web python db_manage.py up
+docker-compose run app python db_manage.py up
 ~~~
 
 ## Import
@@ -58,4 +58,4 @@ python tests.py
 
 The MIT License
 
-Copyright (c) 2015 Laurent Arnoud <laurent@spkdev.net>
+Copyright (c) 2015-2019 Laurent Arnoud <laurent@spkdev.net>
