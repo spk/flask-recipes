@@ -1,7 +1,7 @@
 from flask import render_template, request, url_for, redirect, Response, jsonify, Blueprint
 
-from models import Recipe, Category
-from schemas import RecipeSchema, PaginationSchema
+from .models import Recipe, Category
+from .schemas import RecipeSchema, PaginationSchema
 
 recipes = Blueprint("recipes", __name__)
 
@@ -9,7 +9,7 @@ recipes = Blueprint("recipes", __name__)
 def api_get_recipe(id):
     recipe = Recipe.query.get_or_404(id)
     result = RecipeSchema().dump(recipe)
-    return jsonify(result.data)
+    return jsonify(result)
 
 @recipes.route('/api/v1/recipes', defaults={'page': 1})
 @recipes.route('/api/v1/recipes/page/<int:page>')
@@ -17,7 +17,7 @@ def api_get_recipes(page):
     per_page = get_per_page()
     pagination = Recipe.query.order_by(Recipe.created_at.desc()).paginate(page, per_page)
     result = PaginationSchema().dump(pagination)
-    return jsonify(result.data)
+    return jsonify(result)
 
 @recipes.route('/random')
 def random():

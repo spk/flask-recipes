@@ -4,10 +4,10 @@ from xml.etree.ElementTree import ParseError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from factory import create_celery_app
+from app import create_celery_app
 from flask import g
-from extensions import db
-from models import Recipe, Category, Ingredient, Direction
+from .extensions import db
+from .models import Recipe, Category, Ingredient, Direction
 
 celery = create_celery_app()
 

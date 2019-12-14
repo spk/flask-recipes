@@ -19,6 +19,8 @@ services:
   app:
     build: .
     command: python run.py
+    environment:
+      FLASK_APP: app
     volumes:
       - .:/code
     ports:

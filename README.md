@@ -47,7 +47,7 @@ python import_recipes.py
 ## Tests
 
 ~~~ console
-python tests.py
+pytest
 ~~~
 
 ## Resources

@@ -1,4 +1,4 @@
-from extensions import db
+from .extensions import db
 from datetime import datetime
 from sqlalchemy.sql.expression import func
 from sqlalchemy import event

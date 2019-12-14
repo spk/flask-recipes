@@ -1,6 +1,6 @@
 import sys
 from sqlalchemy import create_engine
-from app.factory import create_app
+from app import create_app
 import app.models
 from app.extensions import db
 from app.config import config, SELECTED_CONFIG
