@@ -1,0 +1,67 @@
+---
+# The name of this app. Must be unique within a project.
+name: app
+# The runtime the application uses. The 'type' key defines the base container
+# image that will be used to run the application. There is a separate base
+# container image for each primary language for the application,
+# in multiple versions. Check the Python documentation
+# (https://docs.platform.sh/languages/python.html#supported-versions)
+# to find the supported versions for the 'python' type.
+type: 'python:3.8'
+
+relationships:
+  database: 'db:postgresql'
+  redis: 'redis:redis'
+
+hooks:
+  build: |
+    pip install -r requirements.txt
+  deploy: |
+    export FLASK_ENV=production
+
+variables:
+  env:
+    type: 'none'
+
+web:
+  commands:
+    start: |
+      export FLASK_ENV=production
+      export POSTGRES_USER=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].username")
+      export POSTGRES_PASSWORD=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].password")
+      export POSTGRES_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].host")
+      export POSTGRES_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].port")
+      export POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/
+      export POSTGRES_DB=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].path")
+      export REDIS_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].host")
+      export REDIS_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].port")
+      export REDIS_URL=redis://${REDIS_HOST}:${REDIS_PORT}/0
+      gunicorn -b 127.0.0.1:$PORT run:App
+  disk: 512
+  variables:
+    env:
+      type: 'web'
+
+workers:
+  queue:
+    commands:
+      start: |
+        export FLASK_ENV=production
+        export POSTGRES_USER=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].username")
+        export POSTGRES_PASSWORD=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].password")
+        export POSTGRES_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].host")
+        export POSTGRES_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].port")
+        export POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/
+        export POSTGRES_DB=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].path")
+        export REDIS_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].host")
+        export REDIS_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].port")
+        export REDIS_URL=redis://${REDIS_HOST}:${REDIS_PORT}/0
+        celery worker --app=app.tasks
+    variables:
+      env:
+        type: 'worker'
+    disk: 512
+    mounts:
+      recipes:
+        source: local
+        source_path: recipes
