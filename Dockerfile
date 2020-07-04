@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.8-alpine
 
 ENV APP_USER recipes
 ENV APP_ROOT /code
@@ -9,7 +9,7 @@ RUN addgroup -g 1000 ${APP_USER} && \
 
 RUN apk add --no-cache \
         gcc \
-        python-dev \
+        python3-dev \
         musl-dev \
         postgresql-dev
 
