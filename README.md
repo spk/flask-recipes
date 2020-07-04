@@ -2,53 +2,42 @@
 
 Import recipes into flask web app.
 
-## Install
+## Setup
 
-### Standard
-
-~~~ console
+```
 sudo apt install python-dev python-pip virtualenv
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
-~~~
+```
 
 Create database:
 
-~~~ console
+```
 python db_manage.py up
-~~~
+```
 
-~~~ console
+Run:
+
+```
 python run.py || foreman start
-~~~
+```
 
 Goto http://127.0.0.1:5000/
 
-### Docker
-
-~~~ console
-docker-compose up
-~~~
-
-Run database creation command with:
-
-~~~ console
-docker-compose run app python db_manage.py up
-~~~
-
 ## Import
 
-~~~ console
+```
+celery worker --app=app.tasks
 sh download-recipes.sh
 python import_recipes.py
-~~~
+```
 
 ## Tests
 
-~~~ console
+```
 pytest
-~~~
+```
 
 ## Resources
 
@@ -58,4 +47,4 @@ pytest
 
 The MIT License
 
-Copyright (c) 2015-2019 Laurent Arnoud <laurent@spkdev.net>
+Copyright (c) 2015-2020 Laurent Arnoud <laurent@spkdev.net>
