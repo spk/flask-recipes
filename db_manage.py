@@ -7,8 +7,8 @@ from app.config import config, SELECTED_CONFIG
 
 class DBManage(object):
     def __init__(self):
-        self.host = config[SELECTED_CONFIG].POSTGRES_HOST
-        self.engine = create_engine(self.host, echo=True)
+        self.url = config[SELECTED_CONFIG].POSTGRES_URL
+        self.engine = create_engine(self.url, echo=True)
         self.conn = self.engine.connect()
 
     def up(self, db_name=config[SELECTED_CONFIG].POSTGRES_DB):

@@ -1,4 +1,6 @@
-venv
 *.pyc
+.env
+.python_history
 app.db
 app.db-journal
+venv
