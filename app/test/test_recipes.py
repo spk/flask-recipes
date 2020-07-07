@@ -34,7 +34,12 @@ def client(app):
 
 
 def test_import_recipe_success(app, client):
-    import_recipe('<?xml version="1.0" encoding="UTF-8"?><recipeml version="0.5"><recipe><head><title>test</title><categories><cat>Vegetarian</cat></categories></head></recipe></recipeml>')
+    import_recipe("""<?xml version="1.0" encoding="UTF-8"?>
+<recipeml version="0.5">
+<recipe>
+<head><title>test</title><categories><cat>Vegetarian</cat></categories></head>
+</recipe>
+</recipeml>""")
     with app.app_context():
         assert db.session.query(Recipe).filter_by(
             title="test").first().title == "test"
@@ -43,8 +48,8 @@ def test_import_recipe_success(app, client):
 
 
 def test_import_recipe_parse_error(app, client):
-    import_recipe(
-        '<?xml version="1.0" encoding="UTF-8"?><recipeml version="0.5"><recipe><head><title>test</title></head></recipe>')
+    import_recipe("""<?xml version="1.0" encoding="UTF-8"?>
+<recipeml version="0.5"><recipe><head><title>test</title></head></recipe>""")
     with app.app_context():
         assert db.session.query(Recipe).filter_by(title="test").first() is None
 
@@ -54,7 +59,12 @@ def test_import_recipe_with_slash(app, client):
         category = Category(title='Vegetarian')
         db.session.add(category)
         db.session.commit()
-    import_recipe('<?xml version="1.0" encoding="UTF-8"?><recipeml version="0.5"><recipe><head><title>test</title><categories><cat>Vegetarian/</cat></categories></head></recipe></recipeml>')
+    import_recipe("""<?xml version="1.0" encoding="UTF-8"?>
+<recipeml version="0.5">
+<recipe>
+<head><title>test</title><categories><cat>Vegetarian/</cat></categories></head>
+</recipe>
+</recipeml>""")
     with app.app_context():
         assert db.session.query(Recipe).filter_by(
             title="test").first().title == "test"

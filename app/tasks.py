@@ -2,7 +2,6 @@ import zipfile
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import ParseError
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm.exc import NoResultFound
 
 from app import create_celery_app
 from .extensions import db

@@ -1,9 +1,9 @@
 import sys
 from sqlalchemy import create_engine
 from app import create_app
-import app.models
 from app.extensions import db
 from app.config import config, SELECTED_CONFIG
+
 
 class DBManage(object):
     def __init__(self):
@@ -23,6 +23,7 @@ class DBManage(object):
         self.conn.execute("commit")
         self.conn.execute("drop database {0}".format(db_name))
         self.conn.close()
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
