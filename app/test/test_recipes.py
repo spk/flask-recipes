@@ -1,13 +1,9 @@
 import json
-import pdb
 import pytest
-from pprint import pprint
-from unittest import TestCase as Base
-from contextlib import contextmanager
 from app import create_app
 from app.extensions import db
 from app.models import Recipe, Category
-from flask import url_for
+
 
 @pytest.fixture
 def app():
@@ -29,18 +25,22 @@ def app():
         db.session.remove()
         db.drop_all()
 
+
 @pytest.fixture
 def client(app):
     """A test client for the app."""
     return app.test_client()
+
 
 def test_empty_db(client):
     rv = client.get('/')
     assert rv.status_code == 200
     assert 'No entries.'.encode('utf-8') in rv.data
 
+
 def test_random_with_no_data(client):
     assert client.get('/random').status_code == 404
+
 
 def test_random_with_data(app, client):
     title = 'random'
@@ -53,6 +53,7 @@ def test_random_with_data(app, client):
     assert rv.status_code == 200
     assert title.encode('utf-8') in rv.data
 
+
 def test_recipes_with_quantity(app, client):
     title = 'with_quantity'
     quantity = 1
@@ -63,6 +64,7 @@ def test_recipes_with_quantity(app, client):
         rv = client.get('/{0}'.format(new_recipe.id))
         h1 = '{0} ({1})'.format(title, quantity)
         assert h1.encode('utf-8') in rv.data
+
 
 def test_recipes_without_quantity(app, client):
     title = 'without_quantity'
@@ -75,9 +77,11 @@ def test_recipes_without_quantity(app, client):
         h1 = '{0}'.format(title)
         assert h1.encode('utf-8') in rv.data
 
+
 def test_no_categories(client):
     rv = client.get('/categories/')
     assert 'No entries.'.encode('utf-8') in rv.data
+
 
 def test_with_categories(app, client):
     with app.app_context():
@@ -87,10 +91,12 @@ def test_with_categories(app, client):
         rv = client.get('/categories/')
         assert category.title.encode('utf-8') in rv.data
 
+
 def test_recipes_without_categories(client):
     with client as c:
         rv = c.get('/categories/None')
         assert rv.status_code == 404
+
 
 def test_recipes_with_categories(app, client):
     title = 'category'
@@ -104,6 +110,7 @@ def test_recipes_with_categories(app, client):
         rv = client.get('/categories/{0}'.format(title))
         assert rv.status_code == 200
 
+
 def test_api_get_recipe(app, client):
     title = 'json'
     with app.app_context():
@@ -114,6 +121,7 @@ def test_api_get_recipe(app, client):
         data = json.loads(rv.data)
         assert data['title'] == title
 
+
 def test_api_get_recipes(app, client):
     title = 'recipes api'
     with app.app_context():
@@ -122,13 +130,14 @@ def test_api_get_recipes(app, client):
         db.session.commit()
         rv = client.get('/api/v1/recipes')
         data = json.loads(rv.data)
-        assert data['has_next'] == False
-        assert data['has_prev'] == False
+        assert data['has_next'] is False
+        assert data['has_prev'] is False
         assert new_recipe.title == data['items'][0]['title']
         assert data['page'] == 1
         assert data['pages'] == 1
         assert data['per_page'] == 10
         assert data['total'] == 1
+
 
 def test_clean_title_before_insert(app, client):
     title = 'test /'

@@ -6,6 +6,7 @@ from flask_bootstrap import Bootstrap
 from .config import config, SELECTED_CONFIG
 from .views import recipes
 
+
 def create_celery_app(app=None):
     app = app or create_app()
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
@@ -14,6 +15,7 @@ def create_celery_app(app=None):
 
     class ContextTask(TaskBase):
         abstract = True
+
         def __call__(self, *args, **kwargs):
             with app.app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
@@ -22,10 +24,12 @@ def create_celery_app(app=None):
     celery.app = app
     return celery
 
+
 def create_before_request(app):
     def before_request():
         g.db = db
     return before_request
+
 
 def create_app():
     """Create and configure an instance of the Flask application."""

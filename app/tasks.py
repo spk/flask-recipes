@@ -5,11 +5,11 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from app import create_celery_app
-from flask import g
 from .extensions import db
 from .models import Recipe, Category, Ingredient, Direction
 
 celery = create_celery_app()
+
 
 def get_one_or_create(session, model, **kwargs):
     try:
@@ -24,6 +24,7 @@ def get_one_or_create(session, model, **kwargs):
             session.rollback()
             return session.query(model).filter_by(**kwargs).one()
 
+
 def new_recipe(root):
     title = root.find('recipe/head/title')
     try:
@@ -32,7 +33,8 @@ def new_recipe(root):
         quantity = None
 
     cats = root.findall('recipe/head/categories/cat')
-    cats_name = set([el.text for el in cats if el.text and len(el.text) > 1 and not el.text == 'None'])
+    cats_name = set([el.text for el in cats if el.text and len(
+        el.text) > 1 and not el.text == 'None'])
     categories = []
     for cat in cats_name:
         category = get_one_or_create(db.session, Category, title=cat)
@@ -57,10 +59,11 @@ def new_recipe(root):
             directions.append(Direction(step=step.text.strip()))
 
     return Recipe(title=title.text,
-            quantity=quantity,
-            directions=directions,
-            ingredients=ingredients,
-            categories=categories)
+                  quantity=quantity,
+                  directions=directions,
+                  ingredients=ingredients,
+                  categories=categories)
+
 
 @celery.task(bind=True)
 def import_zip(self, zippath):
@@ -75,8 +78,8 @@ def import_zip(self, zippath):
                 db.session.add(new_recipe(root))
                 db.session.commit()
                 self.update_state(state='PROGRESS',
-                        meta={'current': i, 'total': len(filenames)})
+                                  meta={'current': i, 'total': len(filenames)})
             except ParseError:
                 print("Error ! Last successful: {0}".format(filename))
     return {'current': 100, 'total': 100, 'status': 'Task completed!',
-        'result': "Import {0}".format(zippath)}
+            'result': "Import {0}".format(zippath)}

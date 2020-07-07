@@ -3,10 +3,17 @@ from datetime import datetime
 from sqlalchemy.sql.expression import func
 from sqlalchemy import event
 
-categories = db.Table('recipes_categories',
-        db.Column('category_id', db.Integer, db.ForeignKey('categories.id')),
-        db.Column('recipe_id', db.Integer, db.ForeignKey('recipes.id'))
-        )
+categories = db.Table(
+    'recipes_categories',
+    db.Column(
+        'category_id',
+        db.Integer,
+        db.ForeignKey('categories.id')),
+    db.Column(
+        'recipe_id',
+        db.Integer,
+        db.ForeignKey('recipes.id')))
+
 
 class Recipe(db.Model):
     __tablename__ = 'recipes'
@@ -17,11 +24,11 @@ class Recipe(db.Model):
     title = db.Column(db.String(150), index=True)
     quantity = db.Column(db.String(15))
     directions = db.relationship('Direction', backref='Recipe',
-            lazy='dynamic')
+                                 lazy='dynamic')
     ingredients = db.relationship('Ingredient', backref='Recipe',
-            lazy='dynamic')
+                                  lazy='dynamic')
     categories = db.relationship('Category', secondary=categories,
-            backref=db.backref('recipes', lazy='dynamic'))
+                                 backref=db.backref('recipes', lazy='dynamic'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
@@ -31,11 +38,13 @@ class Recipe(db.Model):
     def random(self):
         return self.query.order_by(func.random()).limit(1)
 
+
 class Direction(db.Model):
     __tablename__ = 'directions'
     id = db.Column(db.Integer, primary_key=True)
     step = db.Column(db.Text)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'))
+
 
 class Ingredient(db.Model):
     __tablename__ = 'ingredients'
@@ -45,6 +54,7 @@ class Ingredient(db.Model):
     item = db.Column(db.Text, index=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'))
 
+
 class Category(db.Model):
     __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
@@ -52,9 +62,12 @@ class Category(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow())
 
 # Trigers
+
+
 def clean_title_before_insert(mapper, connection, target):
     target.title = target.title.replace('/', '')
     target.title = target.title.strip()
+
 
 event.listen(Recipe, 'before_insert', clean_title_before_insert)
 event.listen(Category, 'before_insert', clean_title_before_insert)
