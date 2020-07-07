@@ -11,20 +11,6 @@ from .models import Recipe, Category, Ingredient, Direction
 celery = create_celery_app()
 
 
-def get_one_or_create(session, model, **kwargs):
-    try:
-        return session.query(model).filter_by(**kwargs).one()
-    except NoResultFound:
-        created = model(**kwargs)
-        try:
-            session.add(created)
-            session.flush()
-            return created
-        except IntegrityError:
-            session.rollback()
-            return session.query(model).filter_by(**kwargs).one()
-
-
 def new_recipe(root):
     title = root.find('recipe/head/title')
     try:
@@ -32,12 +18,16 @@ def new_recipe(root):
     except AttributeError:
         quantity = None
 
-    cats = root.findall('recipe/head/categories/cat')
-    cats_name = set([el.text for el in cats if el.text and len(
+    categories = root.findall('recipe/head/categories/cat')
+    categorie_names = set([el.text for el in categories if el.text and len(
         el.text) > 1 and not el.text == 'None'])
     categories = []
-    for cat in cats_name:
-        category = get_one_or_create(db.session, Category, title=cat)
+    for categorie_name in categorie_names:
+        clean_title = categorie_name.replace('/', '').strip()
+        category = db.session.query(Category).filter_by(
+            title=clean_title).first()
+        if category is None:
+            category = Category(title=clean_title)
         categories.append(category)
 
     # XXX check ingredients validity (None)
@@ -65,6 +55,23 @@ def new_recipe(root):
                   categories=categories)
 
 
+@celery.task(bind=True, default_retry_delay=5)
+def import_recipe(self, xml_content):
+    try:
+        root = ET.fromstring(xml_content)
+        db.session.add(new_recipe(root))
+        db.session.commit()
+    except ParseError:
+        print("ParseError in: {0}".format(xml_content))
+        db.session.rollback()
+    except IntegrityError as exc:
+        print("IntegrityError in: {0}".format(xml_content))
+        db.session.rollback()
+        raise self.retry(exc=exc)
+    finally:
+        db.session.close()
+
+
 @celery.task(bind=True)
 def import_zip(self, zippath):
     with zipfile.ZipFile(zippath, 'r') as z:
@@ -72,14 +79,9 @@ def import_zip(self, zippath):
         filenames = z.namelist()
         for i, filename in enumerate(filenames, start=1):
             print("Import recipe: {0}".format(filename))
-            try:
-                content = z.open(filename).read()
-                root = ET.fromstring(content)
-                db.session.add(new_recipe(root))
-                db.session.commit()
-                self.update_state(state='PROGRESS',
-                                  meta={'current': i, 'total': len(filenames)})
-            except ParseError:
-                print("Error ! Last successful: {0}".format(filename))
+            xml_content = z.open(filename).read()
+            import_recipe.delay(xml_content.decode('utf-8'))
+            self.update_state(state='PROGRESS',
+                              meta={'current': i, 'total': len(filenames)})
     return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'result': "Import {0}".format(zippath)}

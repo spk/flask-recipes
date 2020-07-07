@@ -11,8 +11,8 @@ class ImportRecipes(object):
         self.recipes_files = os.path.join(self.basedir, 'recipes', '*.zip')
 
     def main(self):
-        for zippath in glob.glob(self.recipes_files):
-           import_zip.delay(zippath)
+        for index, zippath in enumerate(glob.glob(self.recipes_files)):
+           import_zip.apply_async(args=[zippath], countdown=index*2)
         return 0
 
 if __name__ == '__main__':

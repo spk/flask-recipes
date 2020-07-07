@@ -65,8 +65,7 @@ class Category(db.Model):
 
 
 def clean_title_before_insert(mapper, connection, target):
-    target.title = target.title.replace('/', '')
-    target.title = target.title.strip()
+    target.title = target.title.replace('/', '').strip()
 
 
 event.listen(Recipe, 'before_insert', clean_title_before_insert)
