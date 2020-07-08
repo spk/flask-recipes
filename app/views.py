@@ -6,6 +6,7 @@ from .schemas import RecipeSchema, PaginationSchema
 recipes = Blueprint("recipes", __name__)
 
 DEFAULT_PER_PAGE = 10
+MAX_PER_PAGE = 1000
 
 
 @recipes.route('/api/v1/<int:id>')
@@ -70,8 +71,8 @@ def index(page):
 
 def get_per_page():
     per_page = request.args.get('per_page')
-    if not per_page:
-        per_page = DEFAULT_PER_PAGE
-    else:
+    if per_page and per_page.isdigit() and int(per_page) <= MAX_PER_PAGE:
         per_page = int(per_page)
+    else:
+        per_page = DEFAULT_PER_PAGE
     return per_page

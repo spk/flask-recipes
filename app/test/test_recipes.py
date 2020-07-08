@@ -191,6 +191,40 @@ def test_api_get_recipes(app, client):
         assert data['total'] == 1
 
 
+def test_api_with_invalid_per_page(app, client):
+    title = 'recipes api'
+    with app.app_context():
+        new_recipe = Recipe(title=title)
+        db.session.add(new_recipe)
+        db.session.commit()
+        rv = client.get('/api/v1/recipes?per_page=toto')
+        data = json.loads(rv.data)
+        assert data['has_next'] is False
+        assert data['has_prev'] is False
+        assert new_recipe.title == data['items'][0]['title']
+        assert data['page'] == 1
+        assert data['pages'] == 1
+        assert data['per_page'] == 10
+        assert data['total'] == 1
+
+
+def test_api_with_per_page_above_limit(app, client):
+    title = 'recipes api'
+    with app.app_context():
+        new_recipe = Recipe(title=title)
+        db.session.add(new_recipe)
+        db.session.commit()
+        rv = client.get('/api/v1/recipes?per_page=1001')
+        data = json.loads(rv.data)
+        assert data['has_next'] is False
+        assert data['has_prev'] is False
+        assert new_recipe.title == data['items'][0]['title']
+        assert data['page'] == 1
+        assert data['pages'] == 1
+        assert data['per_page'] == 10
+        assert data['total'] == 1
+
+
 def test_clean_title_before_insert(app, client):
     title = 'test /'
     with app.app_context():
