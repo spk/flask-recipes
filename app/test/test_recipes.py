@@ -106,26 +106,26 @@ def test_random_with_data(app, client):
     assert title.encode('utf-8') in rv.data
 
 
-def test_recipes_with_quantity(app, client):
+def test_recipes_show_with_quantity(app, client):
     title = 'with_quantity'
     quantity = 1
     with app.app_context():
         new_recipe = Recipe(title=title, quantity=quantity)
         db.session.add(new_recipe)
         db.session.commit()
-        rv = client.get('/{0}'.format(new_recipe.id))
+        rv = client.get('/recipes/{0}'.format(new_recipe.id))
         h1 = '{0} ({1})'.format(title, quantity)
         assert h1.encode('utf-8') in rv.data
 
 
-def test_recipes_without_quantity(app, client):
+def test_recipes_show_without_quantity(app, client):
     title = 'without_quantity'
     quantity = None
     with app.app_context():
         new_recipe = Recipe(title=title, quantity=quantity)
         db.session.add(new_recipe)
         db.session.commit()
-        rv = client.get('/{0}'.format(new_recipe.id))
+        rv = client.get('/recipes/{0}'.format(new_recipe.id))
         h1 = '{0}'.format(title)
         assert h1.encode('utf-8') in rv.data
 

@@ -5,6 +5,8 @@ from .schemas import RecipeSchema, PaginationSchema
 
 recipes = Blueprint("recipes", __name__)
 
+DEFAULT_PER_PAGE = 10
+
 
 @recipes.route('/api/v1/<int:id>')
 def api_get_recipe(id):
@@ -30,7 +32,7 @@ def random():
     return render_template('show.html', recipe=recipe)
 
 
-@recipes.route('/<id>')
+@recipes.route('/recipes/<id>')
 def show(id):
     recipe = Recipe.query.get_or_404(id)
     return render_template('show.html', recipe=recipe)
@@ -69,7 +71,7 @@ def index(page):
 def get_per_page():
     per_page = request.args.get('per_page')
     if not per_page:
-        per_page = 10
+        per_page = DEFAULT_PER_PAGE
     else:
         per_page = int(per_page)
     return per_page
