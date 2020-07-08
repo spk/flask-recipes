@@ -2,7 +2,7 @@
 {% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block container %}
-    <h4>Recipes</h4>
+    <h4>Recipes ({{pagination.total}})</h4>
     <ul class="nav nav-pills nav-stacked">
         {%- for recipe in pagination.items %}
             <li class="recipe"><a href="{{url_for('.show', id=recipe.id)}}">{{recipe.title}}</a></li>

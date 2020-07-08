@@ -78,6 +78,18 @@ def test_empty_db(client):
     assert 'No entries.'.encode('utf-8') in rv.data
 
 
+def test_index_with_recipes(app, client):
+    title = 'index_with_recipes'
+    quantity = None
+    with app.app_context():
+        new_recipe = Recipe(title=title, quantity=quantity)
+        db.session.add(new_recipe)
+        db.session.commit()
+    rv = client.get('/')
+    assert rv.status_code == 200
+    assert 'Recipes (1)'.encode('utf-8') in rv.data
+
+
 def test_random_with_no_data(client):
     assert client.get('/random').status_code == 404
 

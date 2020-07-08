@@ -10,6 +10,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    TEMPLATES_AUTO_RELOAD = True
     POSTGRES_URL = os.environ.get('POSTGRES_URL',
                                   'postgres://postgres:postgres@db:5432/')
     POSTGRES_DB = os.environ.get('POSTGRES_DB', 'flaskrecipes_development')
