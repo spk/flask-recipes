@@ -12,9 +12,10 @@ RUN apk add --no-cache \
         python3-dev \
         musl-dev \
         postgresql-dev
+RUN python -m pip install --upgrade pip
 
 WORKDIR ${APP_ROOT}
 ADD requirements.txt ${APP_ROOT}/
-RUN pip install -r requirements.txt
+RUN pip install --use-feature=2020-resolver --use-feature=fast-deps -r requirements.txt
 USER ${APP_USER}
 ADD . ${APP_ROOT}
