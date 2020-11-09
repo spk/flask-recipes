@@ -1,6 +1,7 @@
 # flask-recipes
 
 Import recipes into flask web app.
+rest
 
 ## Setup
 
