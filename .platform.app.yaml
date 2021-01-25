@@ -36,6 +36,7 @@ web:
       export REDIS_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].host")
       export REDIS_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].port")
       export REDIS_URL=redis://${REDIS_HOST}:${REDIS_PORT}/0
+      export FLASK_RECIPES_SECRET_KEY=$PLATFORM_PROJECT_ENTROPY
       gunicorn -b 127.0.0.1:$PORT run:App
   disk: 512
   variables:
@@ -56,6 +57,7 @@ workers:
         export REDIS_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].host")
         export REDIS_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].port")
         export REDIS_URL=redis://${REDIS_HOST}:${REDIS_PORT}/0
+        export FLASK_RECIPES_SECRET_KEY=$PLATFORM_PROJECT_ENTROPY
         celery worker --app=app.tasks
     variables:
       env:
