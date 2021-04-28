@@ -1,8 +1,8 @@
 FROM python:3.8-alpine
 
-ENV APP_USER recipes
-ENV APP_ROOT /code
-ENV PYTHONUNBUFFERED 1
+ENV APP_USER=recipes \
+    APP_ROOT=/code \
+    PYTHONUNBUFFERED=1
 
 RUN addgroup -g 1000 ${APP_USER} && \
     adduser -u 1000 -h ${APP_ROOT} -D -G ${APP_USER} ${APP_USER}
