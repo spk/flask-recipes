@@ -187,7 +187,7 @@ def test_api_get_recipes(app, client):
         assert new_recipe.title == data['items'][0]['title']
         assert data['page'] == 1
         assert data['pages'] == 1
-        assert data['per_page'] == 10
+        assert data['per_page'] == 20
         assert data['total'] == 1
 
 
@@ -198,14 +198,8 @@ def test_api_with_invalid_per_page(app, client):
         db.session.add(new_recipe)
         db.session.commit()
         rv = client.get('/api/v1/recipes?per_page=toto')
-        data = json.loads(rv.data)
-        assert data['has_next'] is False
-        assert data['has_prev'] is False
-        assert new_recipe.title == data['items'][0]['title']
-        assert data['page'] == 1
-        assert data['pages'] == 1
-        assert data['per_page'] == 10
-        assert data['total'] == 1
+        assert rv.status_code == 404
+
 
 
 def test_api_with_per_page_above_limit(app, client):
@@ -221,7 +215,7 @@ def test_api_with_per_page_above_limit(app, client):
         assert new_recipe.title == data['items'][0]['title']
         assert data['page'] == 1
         assert data['pages'] == 1
-        assert data['per_page'] == 10
+        assert data['per_page'] == 1000
         assert data['total'] == 1
 
 

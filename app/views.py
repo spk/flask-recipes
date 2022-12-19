@@ -1,11 +1,11 @@
 from flask import render_template, request, jsonify, Blueprint
 
+from .extensions import db
 from .models import Recipe, Category
 from .schemas import RecipeSchema, PaginationSchema
 
 recipes = Blueprint("recipes", __name__)
 
-DEFAULT_PER_PAGE = 10
 MAX_PER_PAGE = 1000
 
 
@@ -19,10 +19,11 @@ def api_get_recipe(id):
 @recipes.route('/api/v1/recipes', defaults={'page': 1})
 @recipes.route('/api/v1/recipes/page/<int:page>')
 def api_get_recipes(page):
-    per_page = get_per_page()
-    pagination = Recipe.query.order_by(
-        Recipe.created_at.desc()).paginate(
-        page, per_page)
+    pagination = db.paginate(
+        db.select(Recipe).order_by(Recipe.created_at.desc()),
+        page=page,
+        max_per_page=MAX_PER_PAGE,
+    )
     result = PaginationSchema().dump(pagination)
     return jsonify(result)
 
@@ -42,37 +43,29 @@ def show(id):
 @recipes.route('/categories/', defaults={'page': 1})
 @recipes.route('/categories/page/<int:page>')
 def categories(page):
-    per_page = get_per_page()
-    pagination = Category.query.order_by(
-        Category.created_at.desc()).paginate(
-        page, per_page)
+    pagination = db.paginate(
+        db.select(Category).order_by(Category.created_at.desc()),
+        page=page,
+        max_per_page=MAX_PER_PAGE,
+    )
     return render_template('categories.html', pagination=pagination)
 
 
 @recipes.route('/categories/<title>', defaults={'page': 1})
 @recipes.route('/categories/<title>/page/<int:page>')
 def recipes_by_category(title, page):
-    per_page = get_per_page()
-    pagination = Category.query.filter_by(
-        title=title).first_or_404().recipes.paginate(
-        page, per_page)
+    pagination = db.paginate(Category.query.filter_by(
+        title=title
+    ).first_or_404().recipes, page=page, max_per_page=MAX_PER_PAGE)
     return render_template('index.html', pagination=pagination)
 
 
 @recipes.route('/', defaults={'page': 1})
 @recipes.route('/page/<int:page>')
 def index(page):
-    per_page = get_per_page()
-    pagination = Recipe.query.order_by(
-        Recipe.created_at.desc()).paginate(
-        page, per_page)
+    pagination = db.paginate(
+        db.select(Recipe).order_by(Recipe.created_at.desc()),
+        page=page,
+        max_per_page=MAX_PER_PAGE
+    )
     return render_template('index.html', pagination=pagination)
-
-
-def get_per_page():
-    per_page = request.args.get('per_page')
-    if per_page and per_page.isdigit() and int(per_page) <= MAX_PER_PAGE:
-        per_page = int(per_page)
-    else:
-        per_page = DEFAULT_PER_PAGE
-    return per_page

@@ -28,7 +28,7 @@ Goto http://127.0.0.1:5000/
 ## Import
 
 ```
-celery worker --app=app.tasks
+celery --A app.tasks worker
 sh download-recipes.sh
 python import_recipes.py
 ```

@@ -9,8 +9,8 @@ from .views import recipes
 
 def create_celery_app(app=None):
     app = app or create_app()
-    celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
-    celery.conf.update(app.config)
+    celery = Celery(__name__)
+    celery.conf.update(app.config["CELERY_CONFIG"])
     TaskBase = celery.Task
 
     class ContextTask(TaskBase):

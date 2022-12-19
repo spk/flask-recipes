@@ -7,7 +7,7 @@ name: app
 # in multiple versions. Check the Python documentation
 # (https://docs.platform.sh/languages/python.html#supported-versions)
 # to find the supported versions for the 'python' type.
-type: 'python:3.8'
+type: 'python:3.11'
 
 relationships:
   database: 'db:postgresql'
@@ -31,7 +31,7 @@ web:
       export POSTGRES_PASSWORD=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].password")
       export POSTGRES_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].host")
       export POSTGRES_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].port")
-      export POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/
+      export POSTGRES_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/
       export POSTGRES_DB=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].path")
       export REDIS_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].host")
       export REDIS_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].port")
@@ -51,7 +51,7 @@ workers:
         export POSTGRES_PASSWORD=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].password")
         export POSTGRES_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].host")
         export POSTGRES_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].port")
-        export POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/
+        export POSTGRES_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/
         export POSTGRES_DB=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".database[0].path")
         export REDIS_HOST=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].host")
         export REDIS_PORT=$(echo $PLATFORM_RELATIONSHIPS|base64 -d|jq -r ".redis[0].port")
